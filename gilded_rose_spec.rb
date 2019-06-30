@@ -16,6 +16,11 @@ describe GildedRose do
         GildedRose.new(items).update_quality
         expect(items[0].quality).to eq 80
       end
+      it 'does not change the sell_in' do
+        items = [Item.new('Sulfuras', 10, 80)]
+        GildedRose.new(items).update_quality
+        expect(items[0].sell_in).to eq 10
+      end
     end
 
     context 'normal items' do
@@ -30,6 +35,12 @@ describe GildedRose do
         GildedRose.new(items).update_quality
         expect(items[0].quality).to eq 0
       end
+
+      it 'reduces sell_in number' do
+        items = [Item.new('foo', 10, 20)]
+        GildedRose.new(items).update_quality
+        expect(items[0].sell_in).to eq 9
+      end
     end
 
     context 'aged brie' do
@@ -43,6 +54,12 @@ describe GildedRose do
         items = [Item.new('Aged Brie', 10, 50)]
         GildedRose.new(items).update_quality
         expect(items[0].quality).to eq 50
+      end
+
+      it 'reduces sell_in number' do
+        items = [Item.new('Aged Brie', 10, 50)]
+        GildedRose.new(items).update_quality
+        expect(items[0].sell_in).to eq 9
       end
     end
 
@@ -70,6 +87,12 @@ describe GildedRose do
         GildedRose.new(items).update_quality
         expect(items[0].quality).to eq 50
       end
+
+      it 'reduces sell_in number' do
+        items = [Item.new('Backstage passes to a TAFKAL80ETC concert', 10, 49)]
+        GildedRose.new(items).update_quality
+        expect(items[0].sell_in).to eq 9
+      end
     end
 
     context 'Conjured items' do
@@ -81,6 +104,12 @@ describe GildedRose do
         items = [Item.new('Firestones', -1, 20)]
         GildedRose.new(items).update_quality
         expect(items[0].quality).to eq 16
+      end
+
+      it 'reduces sell_in number' do
+        items = [Item.new('Firestones', 10, 49)]
+        GildedRose.new(items).update_quality
+        expect(items[0].sell_in).to eq 9
       end
     end
   end
