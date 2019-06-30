@@ -3,55 +3,45 @@ class GildedRose
     @items = items
   end
 
+  def reduce_quality(item)
+    if item.quality > 0
+      item.quality = if ['Sulfuras', 'Hand of Ragnaros'].include?(item.name)
+                       80
+                     elsif item.name == 'Firestones' # Firestones are Conjured items
+                       item.quality - 2
+                     else
+                       item.quality - 1
+                     end
+    end
+  end
+
+  def increase_quality(item)
+    item.quality = item.quality + 1 if item.quality < 50
+    if item.name == 'Backstage passes to a TAFKAL80ETC concert' && item.quality < 50
+      item.quality = item.quality + 1 if item.quality < 50 && item.sell_in < 11
+      item.quality = item.quality + 1 if item.quality < 50 && item.sell_in < 6
+    end
+  end
+
   def update_quality
     @items.each do |item|
       if (item.name != 'Aged Brie') && (item.name != 'Backstage passes to a TAFKAL80ETC concert')
-        if item.quality > 0
-          item.quality = if ['Sulfuras', 'Hand of Ragnaros'].include?(item.name)
-                           80
-                         else
-                           if item.name == 'Firestones' # Firestones are Conjured items
-                             item.quality - 2
-                           else
-                             item.quality - 1
-                           end
-                         end
-        end
+        reduce_quality(item)
       else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == 'Backstage passes to a TAFKAL80ETC concert'
-            if item.sell_in < 11
-              item.quality = item.quality + 1 if item.quality < 50
-            end
-            if item.sell_in < 6
-              item.quality = item.quality + 1 if item.quality < 50
-            end
-          end
-        end
+        increase_quality(item)
       end
-      if item.name != 'Sulfuras, Hand of Ragnaros'
+      unless ['Sulfuras', 'Hand of Ragnaros'].include?(item.name)
         item.sell_in = item.sell_in - 1
       end
       if item.sell_in < 0
         if item.name != 'Aged Brie'
           if item.name != 'Backstage passes to a TAFKAL80ETC concert'
-            if item.quality > 0
-              item.quality = if ['Sulfuras', 'Hand of Ragnaros'].include?(item.name)
-                               80
-                             else
-                               if item.name == 'Firestones' # Firestones are Conjured items
-                                 item.quality - 2
-                               else
-                                 item.quality - 1
-                               end
-                             end
-            end
+            reduce_quality(item)
           else
             item.quality = item.quality - item.quality
           end
-        else
-          item.quality = item.quality + 1 if item.quality < 50
+        elsif item.quality < 50
+          item.quality = item.quality + 1
         end
       end
     end
